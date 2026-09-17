@@ -94,9 +94,7 @@ class Workout:
 
         print(f'  MAX REPS: {max_completed_reps.to(torch.int8).tolist()[0]}')
 
-        easy_mask = (base_reps == 2).squeeze(0)
-
-        max_completed_reps[:, easy_mask] = max_completed_reps[:, easy_mask] / 2
+        max_completed_reps = max_completed_reps / base_reps
 
         return torch.mean(max_completed_reps)
 
