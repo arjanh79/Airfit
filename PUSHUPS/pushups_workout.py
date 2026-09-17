@@ -17,7 +17,7 @@ class Workout:
     def optimize(self):
 
         base_reps = torch.tensor([[2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2]], dtype=torch.float32)
-        multiplier = self.get_multiplier()
+        multiplier = self.get_multiplier(base_reps)
         reps = base_reps * multiplier
 
         start_reps = reps.tolist()
@@ -82,7 +82,7 @@ class Workout:
         print(f'Score = [{score}]')
         return reps
 
-    def get_multiplier(self):
+    def get_multiplier(self, base_reps):
         data = np.genfromtxt(self.datafile, delimiter=',')
         data = data[::-1].copy()  # copy to avoid issues with flipping
         x = torch.tensor(data[:,:self.workout_length], dtype=torch.float32)
@@ -94,7 +94,9 @@ class Workout:
 
         print(f'  MAX REPS: {max_completed_reps.to(torch.int8).tolist()[0]}')
 
-        max_completed_reps[:, [0, -1]] = max_completed_reps[:, [0, -1]] / 2
+        easy_mask = (base_reps == 2).squeeze(0)
+
+        max_completed_reps[:, easy_mask] = max_completed_reps[:, easy_mask] / 2
 
         return torch.mean(max_completed_reps)
 
