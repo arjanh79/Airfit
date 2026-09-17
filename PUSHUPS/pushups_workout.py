@@ -35,7 +35,7 @@ class Workout:
         loss_fn = nn.BCEWithLogitsLoss()
 
         best_loss = float('inf')
-        best_reps = None
+        best_reps = reps.clone().detach()
         no_improves = 0
 
         for i in range(5000):
@@ -61,12 +61,11 @@ class Workout:
             print(f'{i:04d} {loss.item():.05f} - [{probs}] => {sign}')
 
             if torch.min(predict) > 1.386:
-                best_reps = reps
+                best_reps = reps.detach().clone()
                 break
 
             loss.backward()
             optimizer.step()
-
 
         reps = best_reps
         reps = (reps // 2 * 2).to(dtype=torch.int8)
