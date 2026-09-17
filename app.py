@@ -68,14 +68,14 @@ HTML = """
             background: #182A30;
             border: 1px solid #788083;
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 16px 50px;
             margin-bottom: 12px;
             cursor: pointer;
             transition: 0.2s;
         }
 
         .exercise:hover {
-            transform: scale(1.01);
+            transform: scale(1.02);
         }
 
         .exercise[data-state="completed"] {
@@ -88,7 +88,7 @@ HTML = """
 
         .exercise-name {
             display: grid;
-            grid-template-columns: 60px 1fr auto;
+            grid-template-columns: 100px 1fr 150px;
             align-items: center;
     
             font-size: 22px;
