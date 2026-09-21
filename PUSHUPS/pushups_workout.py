@@ -1,8 +1,8 @@
+from datetime import datetime
+
 import torch
 import torch.optim as optim
-import torch.nn as nn
 
-import numpy as np
 
 from PUSHUPS.pushups_trainer import PushUpsModel
 
@@ -14,11 +14,14 @@ class Workout:
         self.model.load_state_dict(torch.load('PUSHUPS/best_model.pth', weights_only=True))
         self.workout_length = 11
 
+
     def optimize(self):
 
-        base_reps = torch.tensor([[2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2]], dtype=torch.float32)
-        multiplier = self.get_multiplier(base_reps)
-        reps = base_reps * multiplier
+        base_reps = torch.tensor([[3, 1, 1, 3, 1, 3, 1, 1, 3, 1, 3]], dtype=torch.float32)
+
+        # modifier = torch.where(torch.rand(11) < 0.5, 0, 2).to(torch.float32)
+
+        reps = base_reps # + modifier
 
         start_reps = reps.tolist()
         start_reps = ' '.join([f'{i:.02f}' for i in start_reps[0]])
@@ -26,77 +29,48 @@ class Workout:
 
         reps.requires_grad = True
 
-        target = torch.ones((1, self.workout_length))
+        penalty_weight = 3
 
         self.model.eval()
         for param in self.model.parameters():
             param.requires_grad = False
-        optimizer = optim.AdamW([reps], lr=0.05, weight_decay=0.03)
-        loss_fn = nn.BCEWithLogitsLoss()
+        optimizer = optim.AdamW([reps], lr=0.05, weight_decay=0.001)
 
-        best_loss = float('inf')
         best_reps = reps.clone().detach()
-        no_improves = 0
 
-        for i in range(5000):
+        for i in range(1000):
             optimizer.zero_grad()
             predict = self.model(reps)
 
-            loss = loss_fn(predict, target)
+            p_success = predict.sigmoid()
+            loss = -reps + penalty_weight * torch.relu(0.8 - p_success)
+            loss = loss.mean()
 
-            if best_loss - loss.item() > 0.0001:
-                best_loss = loss.item()
-                best_reps = reps.detach().clone()
-                no_improves = 0
-                sign = "+"
-            else:
-                no_improves += 1
-                sign = "-"
-                if no_improves == 50:
-                    break
+            probs_score = predict.sigmoid().tolist()[0]
+            probs = ' '.join([f'{i:.05f}' for i in probs_score])
 
+            print(f'{i:04d} {loss.item():.05f} - [{probs}]')
 
-            probs = predict.sigmoid().tolist()[0]
-            probs = ' '.join([f'{i:.05f}' for i in probs])
-            print(f'{i:04d} {loss.item():.05f} - [{probs}] => {sign}')
-
-            if torch.min(predict) > 1.386:
-                best_reps = reps.detach().clone()
+            if min(probs_score) < 0.5:
                 break
+
+            best_reps = reps.clone().detach()
 
             loss.backward()
             optimizer.step()
 
+
         reps = best_reps
         reps = (reps // 2 * 2).to(dtype=torch.int8)
 
-        for _ in range(2):
-            logits = self.model(reps)
-            reps[:, torch.argmax(logits)] += 2  # Easiest exercise +2
-
         score = self.model(reps).sigmoid()
 
-        print(f'\nWorkout = {reps[0].tolist()}')
+        print(f'Workout = {reps[0].tolist()}')
 
         score = ' '.join([f'{i:.05f}' for i in score[0]])
-        print(f'Score = [{score}]')
+        print(f'  Score = [{score}]\n')
         return reps
 
-    def get_multiplier(self, base_reps):
-        data = np.genfromtxt(self.datafile, delimiter=',')
-        data = data[::-1].copy()  # copy to avoid issues with flipping
-        x = torch.tensor(data[:,:self.workout_length], dtype=torch.float32)
-        y = torch.tensor(data[:,self.workout_length:], dtype=torch.float32)
-
-        x = x * y  # Filter out the fails.
-
-        max_completed_reps = torch.max(x, dim=0)[0].unsqueeze(0)
-
-        print(f'  MAX REPS: {max_completed_reps.to(torch.int8).tolist()[0]}')
-
-        max_completed_reps = max_completed_reps / base_reps
-
-        return torch.mean(max_completed_reps) * 1.05
 
 
 if __name__ == '__main__':

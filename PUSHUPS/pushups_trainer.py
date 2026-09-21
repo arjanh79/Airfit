@@ -66,6 +66,7 @@ class PushUpsTrainer:
         if os.path.exists('best_model.pth'):
             self.model.load_state_dict(torch.load('best_model.pth', weights_only=True))
 
+
         self.ds = PushUpsDataset()
         test_samples = min(len(self.ds), 12)
 
