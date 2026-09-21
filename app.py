@@ -68,10 +68,10 @@ HTML = """
             background: #182A30;
             border: 1px solid #788083;
             border-radius: 12px;
-            padding: 16px 50px;
+            padding: 32px 50px;
             margin-bottom: 12px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.1s;
         }
 
         .exercise:hover {

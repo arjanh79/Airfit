@@ -11,7 +11,7 @@ class PushUpsDataset(Dataset):
         self.datafile = 'progress.txt'
         self.x, self.y = self.read_data()
         self.weighted_loss = self.create_weighted_loss()
-        # self.create_baseline()
+        self.create_baseline()
 
 
     def read_data(self):
@@ -31,7 +31,7 @@ class PushUpsDataset(Dataset):
         x_base[0, [0, -1]] = 40
 
         x_base[1, :] = 3
-        x_base[1, [0, -1]] = 10
+        x_base[1, [0, 3, 5, 8, 10]] = 10
 
         self.x = torch.cat((x_base, self.x), dim=0)
         self.y = torch.cat((y_base, self.y), dim=0)

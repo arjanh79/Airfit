@@ -96,7 +96,7 @@ class Workout:
 
         max_completed_reps = max_completed_reps / base_reps
 
-        return torch.mean(max_completed_reps)
+        return torch.mean(max_completed_reps) * 1.05
 
 
 if __name__ == '__main__':
