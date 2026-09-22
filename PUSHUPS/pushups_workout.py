@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import torch
+import torch.nn as nn
 import torch.optim as optim
 
 
@@ -14,14 +15,16 @@ class Workout:
         self.model.load_state_dict(torch.load('PUSHUPS/best_model.pth', weights_only=True))
         self.workout_length = 11
 
+        day_of_year = datetime.now().timetuple().tm_yday
+        self.gen = torch.Generator().manual_seed(day_of_year)
 
     def optimize(self):
 
         base_reps = torch.tensor([[3, 1, 1, 3, 1, 3, 1, 1, 3, 1, 3]], dtype=torch.float32)
 
-        # modifier = torch.where(torch.rand(11) < 0.5, 0, 2).to(torch.float32)
+        modifier = torch.where(torch.rand(11, generator=self.gen) < 0.5, 0, 1).to(torch.float32)
 
-        reps = base_reps # + modifier
+        reps = base_reps + modifier
 
         start_reps = reps.tolist()
         start_reps = ' '.join([f'{i:.02f}' for i in start_reps[0]])
@@ -43,15 +46,19 @@ class Workout:
             predict = self.model(reps)
 
             p_success = predict.sigmoid()
-            loss = -reps + penalty_weight * torch.relu(0.8 - p_success)
-            loss = loss.mean()
+
+            penalty = (0.8 - p_success)
+            penalty = torch.where(penalty < 0, penalty * 0.1, penalty)
+
+            loss = -reps + penalty_weight * penalty
+            loss = torch.mean(loss)
 
             probs_score = predict.sigmoid().tolist()[0]
             probs = ' '.join([f'{i:.05f}' for i in probs_score])
 
             print(f'{i:04d} {loss.item():.05f} - [{probs}]')
 
-            if min(probs_score) < 0.5:
+            if loss < -9.5:
                 break
 
             best_reps = reps.clone().detach()

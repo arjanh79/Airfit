@@ -11,8 +11,7 @@ class PushUpsDataset(Dataset):
         self.datafile = 'progress.txt'
         self.x, self.y = self.read_data()
         self.weighted_loss = self.create_weighted_loss()
-        self.create_baseline()
-
+        # self.create_baseline()
 
     def read_data(self):
         data = np.genfromtxt(self.datafile, delimiter=',')

@@ -64,7 +64,7 @@ class PushUpsTrainer:
     def __init__(self):
         self.model = PushUpsModel()
         if os.path.exists('best_model.pth'):
-            self.model.load_state_dict(torch.load('best_model.pth', weights_only=True))
+          self.model.load_state_dict(torch.load('best_model.pth', weights_only=True))
 
 
         self.ds = PushUpsDataset()
@@ -73,7 +73,7 @@ class PushUpsTrainer:
         self.train_dl = DataLoader(self.ds, shuffle=False, batch_size=32)
         self.test_dl = DataLoader(Subset(self.ds, range(test_samples)), shuffle=False, batch_size=12)
 
-        self.optimizer = optim.AdamW(self.model.parameters(), weight_decay=0.03)
+        self.optimizer = optim.AdamW(self.model.parameters(), weight_decay=0.001, lr=0.001)
         self.loss_fn = nn.BCEWithLogitsLoss(reduction='none')
 
 
