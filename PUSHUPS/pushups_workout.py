@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
 
 
@@ -20,9 +19,9 @@ class Workout:
 
     def optimize(self):
 
-        base_reps = torch.tensor([[3, 1, 1, 3, 1, 3, 1, 1, 3, 1, 3]], dtype=torch.float32)
+        base_reps = torch.tensor([[3, 2, 2, 3, 2, 3, 2, 2, 3, 2, 3]], dtype=torch.float32)
 
-        modifier = torch.where(torch.rand(11, generator=self.gen) < 0.5, 0, 1).to(torch.float32)
+        modifier = torch.where(torch.rand(11, generator=self.gen) < 0.5, -1, 1).to(torch.float32)
 
         reps = base_reps + modifier
 
@@ -67,7 +66,7 @@ class Workout:
             optimizer.step()
 
 
-        reps = best_reps
+        reps = best_reps + 1
         reps = (reps // 2 * 2).to(dtype=torch.int8)
 
         score = self.model(reps).sigmoid()
