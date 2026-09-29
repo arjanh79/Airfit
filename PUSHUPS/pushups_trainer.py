@@ -28,7 +28,7 @@ class PushUpsModel(nn.Module):
                                 )
         d_model = embedding_dim * 3
 
-        encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=2, batch_first=True)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=2, batch_first=True, dim_feedforward=16)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=2)
 
         self.classifier = nn.Linear(d_model, 1)
@@ -64,7 +64,7 @@ class PushUpsTrainer:
     def __init__(self):
         self.model = PushUpsModel()
         if os.path.exists('best_model.pth'):
-          self.model.load_state_dict(torch.load('best_model.pth', weights_only=True))
+            self.model.load_state_dict(torch.load('best_model.pth', weights_only=True))
 
 
         self.ds = PushUpsDataset()

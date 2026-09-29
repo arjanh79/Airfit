@@ -12,19 +12,19 @@ def create_workout():
 
     EXERCISES = [
         "Step Ups",
-        "Push Ups",
+        "Dumbbell Press",
         "Bent Over Rows",
         "Ab Crunches",
         "Clean and Press",
         "Step Ups",
-        "Push Ups",
+        "Dumbbell Press",
         "Bent Over Rows",
         "Ab Crunches",
         "Clean and Press",
         "Step Ups",
     ]
 
-    WEIGHTS = [12, 0, 24, 6, 24, 12, 0, 24, 6, 24, 12]
+    WEIGHTS = [12, 24, 24, 0, 20, 12, 24, 24, 0, 20, 12]
 
     return [
         {
@@ -51,7 +51,7 @@ HTML = """
             background: #0F2027;
             color: #A1B5BD;
             margin: 0;
-            padding: 40px;
+            padding: 20px;
         }
 
         .container {
@@ -68,7 +68,7 @@ HTML = """
             background: #182A30;
             border: 1px solid #788083;
             border-radius: 12px;
-            padding: 32px 50px;
+            padding: 20px 20px;
             margin-bottom: 12px;
             cursor: pointer;
             transition: 0.1s;
@@ -113,7 +113,7 @@ HTML = """
 
         .finish-button {
             width: 100%;
-            padding: 18px;
+            padding: 32px;
             margin-top: 30px;
             margin-bottom: 50px;
             border: none;

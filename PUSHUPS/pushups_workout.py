@@ -19,7 +19,7 @@ class Workout:
 
     def optimize(self):
 
-        base_reps = torch.tensor([[3, 2, 2, 3, 2, 3, 2, 2, 3, 2, 3]], dtype=torch.float32)
+        base_reps = torch.tensor([[4, 2, 2, 4, 2, 4, 2, 2, 4, 2, 4]], dtype=torch.float32)
 
         modifier = torch.where(torch.rand(11, generator=self.gen) < 0.5, -1, 1).to(torch.float32)
 
@@ -49,7 +49,7 @@ class Workout:
             penalty = (0.8 - p_success)
             penalty = torch.where(penalty < 0, penalty * 0.1, penalty)
 
-            loss = -reps + penalty_weight * penalty
+            loss = -0.8 * reps + penalty_weight * penalty
             loss = torch.mean(loss)
 
             probs_score = predict.sigmoid().tolist()[0]
@@ -58,7 +58,7 @@ class Workout:
             print(f'{i:04d} {loss.item():.05f} - [{probs}]')
 
             if loss < -9.5:
-                break
+               break
 
             best_reps = reps.clone().detach()
 
@@ -66,7 +66,7 @@ class Workout:
             optimizer.step()
 
 
-        reps = best_reps + 1
+        reps = best_reps
         reps = (reps // 2 * 2).to(dtype=torch.int8)
 
         score = self.model(reps).sigmoid()
