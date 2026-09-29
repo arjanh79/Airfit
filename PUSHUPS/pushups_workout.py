@@ -3,6 +3,7 @@ from datetime import datetime
 import torch
 import torch.optim as optim
 
+import numpy as np
 
 from PUSHUPS.pushups_trainer import PushUpsModel
 
@@ -16,6 +17,9 @@ class Workout:
 
         day_of_year = datetime.now().timetuple().tm_yday
         self.gen = torch.Generator().manual_seed(day_of_year)
+
+        self.reps_factor = self.get_last_result()
+        print(self.reps_factor)
 
     def optimize(self):
 
@@ -49,7 +53,7 @@ class Workout:
             penalty = (0.8 - p_success)
             penalty = torch.where(penalty < 0, penalty * 0.1, penalty)
 
-            loss = -0.8 * reps + penalty_weight * penalty
+            loss = self.reps_factor * -reps + penalty_weight * penalty
             loss = torch.mean(loss)
 
             probs_score = predict.sigmoid().tolist()[0]
@@ -77,6 +81,10 @@ class Workout:
         print(f'  Score = [{score}]\n')
         return reps
 
+
+    def get_last_result(self):
+        data = np.genfromtxt(self.datafile, delimiter=',')
+        return 1 - (np.sum(data[-1][11:]) > 10) * 0.2
 
 
 if __name__ == '__main__':

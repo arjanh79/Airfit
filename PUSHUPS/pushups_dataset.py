@@ -37,7 +37,6 @@ class PushUpsDataset(Dataset):
         self.weighted_loss = torch.cat((torch.ones(2, 1), self.weighted_loss))
 
 
-
     def create_weighted_loss(self):
         num_workouts = len(self.y)
         weighted_loss = torch.linspace(0, torch.pi, 20)
@@ -49,14 +48,12 @@ class PushUpsDataset(Dataset):
             added_loss = torch.zeros(to_add) + 0.05
             weighted_loss = torch.cat((weighted_loss, added_loss))
 
-
         return weighted_loss[:num_workouts].unsqueeze(-1)
-
-
 
 
     def __len__(self):
         return len(self.x)
+
 
     def __getitem__(self, index):
         return self.x[index], self.y[index], self.weighted_loss[index]
