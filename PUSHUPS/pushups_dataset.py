@@ -27,7 +27,7 @@ class PushUpsDataset(Dataset):
         x_base = torch.zeros_like(y_base)
 
         x_base[0, :] = 20
-        x_base[0, [0, -1]] = 40
+        x_base[0, [0, 3, 5, 8, 10]] = 40
 
         x_base[1, :] = 3
         x_base[1, [0, 3, 5, 8, 10]] = 10
