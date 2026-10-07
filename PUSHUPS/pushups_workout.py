@@ -20,10 +20,7 @@ class Workout:
 
     def optimize(self):
 
-        # reps = torch.ones((1, 11), dtype=torch.float32)
         reps = torch.rand((1, 11), generator=self.gen)
-
-
 
         start_reps = reps.tolist()
         start_reps = ' '.join([f'{i:.02f}' for i in start_reps[0]])
@@ -70,7 +67,7 @@ class Workout:
             optimizer.step()
 
             if not reps.grad is None:
-                if torch.abs(torch.min(reps.grad)) < 0.05:
+                if torch.max(torch.abs(reps.grad)) < 0.05:
                     break
 
         reps = best_reps # Compensation for rounding errors
@@ -83,15 +80,18 @@ class Workout:
         combined = torch.tensor(combined)
         self.model.eval()
         with torch.no_grad():
-            result = self.model(combined).sigmoid()
-            mask = torch.sum(result > 0.9, dim=1) == 11
-            combined = combined[mask]
+            predictions = self.model(combined).sigmoid()
+            pred_mask = torch.sum(predictions > 0.9, dim=1) == 11
+            combined = combined[pred_mask]
+
             total_reps = torch.sum(combined, dim=1)
             max_reps = torch.max(total_reps)
-            combined = combined[(total_reps == max_reps)]
+            combined = combined[torch.where(total_reps == max_reps)]
+
             total_variance = torch.var(combined / self.var_mask, unbiased=True, dim=1)
             min_variance = torch.min(total_variance)
             combined = combined[(total_variance == min_variance)]
+
             total_variance = torch.var(self.model(combined).sigmoid(), unbiased=True, dim=1)
             min_variance = torch.min(total_variance)
             best_workout = torch.where(total_variance == min_variance)[0]
@@ -104,10 +104,6 @@ class Workout:
         score = ' '.join([f'{i:.05f}' for i in score[0]])
         print(f'  Score = [{score}]\n')
         return reps
-
-
-
-
 
 
 if __name__ == '__main__':
