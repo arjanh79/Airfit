@@ -24,7 +24,7 @@ def create_workout():
         "Step Ups",
     ]
 
-    WEIGHTS = [12, 24, 24, 0, 20, 12, 24, 24, 0, 20, 12]
+    WEIGHTS = [12, 32, 24, 0, 20, 12, 32, 24, 0, 20, 12]
 
     return [
         {

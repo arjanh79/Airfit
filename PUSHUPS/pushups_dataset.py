@@ -11,7 +11,6 @@ class PushUpsDataset(Dataset):
         self.datafile = 'progress.txt'
         self.x, self.y = self.read_data()
         self.weighted_loss = self.create_weighted_loss()
-        # self.create_baseline()
 
     def read_data(self):
         data = np.genfromtxt(self.datafile, delimiter=',')
@@ -20,21 +19,6 @@ class PushUpsDataset(Dataset):
         y = torch.tensor(data[:,self.workout_length:], dtype=torch.float32)
 
         return x, y
-
-
-    def create_baseline(self):
-        y_base = torch.cat((torch.zeros((1, self.workout_length)), torch.ones((1, self.workout_length))), 0)
-        x_base = torch.zeros_like(y_base)
-
-        x_base[0, :] = 20
-        x_base[0, [0, 3, 5, 8, 10]] = 40
-
-        x_base[1, :] = 3
-        x_base[1, [0, 3, 5, 8, 10]] = 10
-
-        self.x = torch.cat((x_base, self.x), dim=0)
-        self.y = torch.cat((y_base, self.y), dim=0)
-        self.weighted_loss = torch.cat((torch.ones(2, 1), self.weighted_loss))
 
 
     def create_weighted_loss(self):
