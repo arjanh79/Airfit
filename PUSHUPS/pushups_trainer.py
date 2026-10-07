@@ -33,16 +33,18 @@ class PushUpsModel(nn.Module):
 
         self.classifier = nn.Linear(d_model, 1)
 
+        self.base_x_seq = torch.arange(1, self.workout_length + 1)
+        self.base_x_eid = torch.tensor([1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1], dtype=torch.int64)
+
     def forward(self, x):
 
-
-        x_seq = torch.arange(1, self.workout_length+1).repeat(x.shape[0], 1)
+        x_seq = self.base_x_seq.expand(x.shape[0], 11)
         x_seq = self.seq_emb(x_seq)
 
         x_rep = x.float().unsqueeze(-1)
         x_rep = self.rep_block(x_rep)
 
-        x_eid = torch.tensor([1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1], dtype=torch.int64).repeat(x.shape[0], 1)
+        x_eid = self.base_x_eid.expand(x.shape[0], 11)
         x_eid = self.eid_emb(x_eid)
 
         x = torch.cat((x_seq, x_rep, x_eid), dim=-1)
