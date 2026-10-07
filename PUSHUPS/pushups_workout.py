@@ -70,8 +70,8 @@ class Workout:
                 if torch.max(torch.abs(reps.grad)) < 0.05:
                     break
 
-        reps = best_reps # Compensation for rounding errors
-        reps = (reps // 2 * 2).to(dtype=torch.int8)
+        # reps = best_reps # Compensation for rounding errors
+        reps = (best_reps // 2 * 2).to(dtype=torch.int8)
 
         reps_high = reps + 2
 
@@ -99,7 +99,7 @@ class Workout:
 
         score = self.model(reps).sigmoid()
 
-        print(f'Workout = {reps[0].tolist()}')
+        print(f'\nWorkout = {reps[0].tolist()}')
 
         score = ' '.join([f'{i:.05f}' for i in score[0]])
         print(f'  Score = [{score}]\n')
