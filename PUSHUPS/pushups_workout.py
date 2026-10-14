@@ -64,13 +64,14 @@ class Workout:
             best_reps = reps.clone().detach()
 
             loss.backward(retain_graph=True)
+
             optimizer.step()
 
             if not reps.grad is None:
                 if torch.max(torch.abs(reps.grad)) < 0.05:
                     break
 
-        # reps = best_reps # Compensation for rounding errors
+        print(best_reps)
         reps = (best_reps // 2 * 2).to(dtype=torch.int8)
 
         reps_high = reps + 2
@@ -78,6 +79,7 @@ class Workout:
         linked = zip(reps.squeeze().tolist(), reps_high.squeeze().tolist())
         combined = list(itertools.product(*linked))
         combined = torch.tensor(combined)
+
         self.model.eval()
         with torch.no_grad():
             predictions = self.model(combined).sigmoid()
@@ -88,6 +90,7 @@ class Workout:
             max_reps = torch.max(total_reps)
             combined = combined[torch.where(total_reps == max_reps)]
 
+
             total_variance = torch.var(combined / self.var_mask, unbiased=True, dim=1)
             min_variance = torch.min(total_variance)
             combined = combined[(total_variance == min_variance)]
@@ -95,6 +98,7 @@ class Workout:
             total_variance = torch.var(self.model(combined).sigmoid(), unbiased=True, dim=1)
             min_variance = torch.min(total_variance)
             best_workout = torch.where(total_variance == min_variance)[0]
+
             reps = combined[best_workout]
 
         score = self.model(reps).sigmoid()

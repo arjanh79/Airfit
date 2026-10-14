@@ -87,6 +87,7 @@ class PushUpsTrainer:
 
             loss = torch.mean(loss)
             loss.backward()
+
             self.optimizer.step()
         return self.eval()
 
