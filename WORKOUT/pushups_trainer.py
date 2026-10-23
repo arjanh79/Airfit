@@ -9,7 +9,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Subset
 
 
-from PUSHUPS.pushups_dataset import PushUpsDataset
+from WORKOUT.pushups_dataset import PushUpsDataset
 
 
 class PushUpsModel(nn.Module):

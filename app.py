@@ -1,6 +1,6 @@
 from flask import Flask, render_template_string, request, jsonify
 
-from PUSHUPS.pushups_workout import Workout
+from WORKOUT.pushups_workout import Workout
 
 app = Flask(__name__)
 
@@ -254,7 +254,7 @@ def finish_workout():
     result = reps + completed
 
 
-    with open("PUSHUPS/progress.txt", "a") as f:
+    with open("WORKOUT/progress.txt", "a") as f:
         f.write(", ".join(map(str, result)) + "\n")
 
     return jsonify(success=True)

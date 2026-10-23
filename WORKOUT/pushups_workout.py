@@ -4,14 +4,14 @@ from datetime import datetime
 import torch
 import torch.optim as optim
 
-from PUSHUPS.pushups_trainer import PushUpsModel
+from WORKOUT.pushups_trainer import PushUpsModel
 
 
 class Workout:
     def __init__(self):
         self.model = PushUpsModel()
-        self.datafile = 'PUSHUPS/progress.txt'
-        self.model.load_state_dict(torch.load('PUSHUPS/best_model.pth', weights_only=True))
+        self.datafile = 'WORKOUT/progress.txt'
+        self.model.load_state_dict(torch.load('WORKOUT/best_model.pth', weights_only=True))
         self.workout_length = 11
         self.var_mask = torch.tensor([[2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2]])
 
@@ -20,7 +20,8 @@ class Workout:
 
     def optimize(self):
 
-        reps = torch.rand((1, 11), generator=self.gen)
+        reps = self.var_mask.to(torch.float) * 4
+
 
         start_reps = reps.tolist()
         start_reps = ' '.join([f'{i:.02f}' for i in start_reps[0]])
@@ -68,7 +69,7 @@ class Workout:
             optimizer.step()
 
             if not reps.grad is None:
-                if torch.max(torch.abs(reps.grad)) < 0.05:
+                if torch.max(torch.abs(reps.grad)) < 0.025:
                     break
 
         print(best_reps)
@@ -90,14 +91,14 @@ class Workout:
             max_reps = torch.max(total_reps)
             combined = combined[torch.where(total_reps == max_reps)]
 
-
             total_variance = torch.var(combined / self.var_mask, unbiased=True, dim=1)
             min_variance = torch.min(total_variance)
             combined = combined[(total_variance == min_variance)]
 
+
             total_variance = torch.var(self.model(combined).sigmoid(), unbiased=True, dim=1)
             min_variance = torch.min(total_variance)
-            best_workout = torch.where(total_variance == min_variance)[0]
+            best_workout = torch.where(total_variance == min_variance)[-1]
 
             reps = combined[best_workout]
 
