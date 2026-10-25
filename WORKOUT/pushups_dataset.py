@@ -25,9 +25,7 @@ class PushUpsDataset(Dataset):
     def create_upper_limits(self):
         max_success = torch.max(self.x * self.y, dim=0).values * 1.25
 
-        # Remove this monster as soon as possible.
-        assert(torch.min(max_success) < 8)
-        max_success[torch.where(max_success < 8)] = 8
+        max_success.clamp_(min=8)
 
         max_success = max_success.to(torch.int64).unsqueeze(0)
 
