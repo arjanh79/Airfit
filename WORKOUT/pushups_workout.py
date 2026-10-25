@@ -20,7 +20,7 @@ class Workout:
 
     def optimize(self):
 
-        reps = self.var_mask.to(torch.float) * 4
+        reps = self.var_mask.to(torch.float)
 
 
         start_reps = reps.tolist()
@@ -72,7 +72,10 @@ class Workout:
                 if torch.max(torch.abs(reps.grad)) < 0.025:
                     break
 
-        print(best_reps)
+        modelled_workout = torch.round(best_reps).squeeze().to(torch.int).tolist()
+        print(f'\nModelled Workout: {modelled_workout}')
+
+
         reps = (best_reps // 2 * 2).to(dtype=torch.int8)
 
         reps_high = reps + 2
@@ -94,7 +97,6 @@ class Workout:
             total_variance = torch.var(combined / self.var_mask, unbiased=True, dim=1)
             min_variance = torch.min(total_variance)
             combined = combined[(total_variance == min_variance)]
-
 
             total_variance = torch.var(self.model(combined).sigmoid(), unbiased=True, dim=1)
             min_variance = torch.min(total_variance)

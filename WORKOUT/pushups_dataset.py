@@ -11,6 +11,8 @@ class PushUpsDataset(Dataset):
         self.datafile = 'progress.txt'
         self.x, self.y = self.read_data()
         self.weighted_loss = self.create_weighted_loss()
+        self.create_upper_limits()
+
 
     def read_data(self):
         data = np.genfromtxt(self.datafile, delimiter=',')
@@ -19,6 +21,25 @@ class PushUpsDataset(Dataset):
         y = torch.tensor(data[:,self.workout_length:], dtype=torch.float32)
 
         return x, y
+
+    def create_upper_limits(self):
+        max_success = torch.max(self.x * self.y, dim=0).values * 1.25
+
+        # Remove this monster as soon as possible.
+        assert(torch.min(max_success) < 8)
+        max_success[torch.where(max_success <= 8)] = 8
+
+        max_success = max_success.to(torch.int64).unsqueeze(0)
+
+        fail_tensor = torch.zeros_like(max_success).to(torch.float32)
+
+        loss = torch.tensor([[1.0]], dtype=torch.float32)
+
+        self.x = torch.concat((max_success, self.x), dim=0)
+        self.y = torch.concat((fail_tensor, self.y), dim=0)
+
+        self.weighted_loss = torch.concat((loss, self.weighted_loss), dim=0)
+
 
 
     def create_weighted_loss(self):
