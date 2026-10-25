@@ -3,6 +3,7 @@ from datetime import datetime
 
 import torch
 import torch.optim as optim
+from yaml._yaml import ScalarEvent
 
 from WORKOUT.pushups_trainer import PushUpsModel
 
@@ -34,7 +35,7 @@ class Workout:
         self.model.eval()
         for param in self.model.parameters():
             param.requires_grad = False
-        optimizer = optim.AdamW([reps], lr=0.05, weight_decay=0.001)
+        optimizer = optim.AdamW([reps], lr=0.05, weight_decay=0.001, betas=(0.85, 0.999))
 
         best_reps = reps.clone().detach()
 
@@ -72,10 +73,6 @@ class Workout:
                 if torch.max(torch.abs(reps.grad)) < 0.025:
                     break
 
-        modelled_workout = torch.round(best_reps).squeeze().to(torch.int).tolist()
-        print(f'\nModelled Workout: {modelled_workout}')
-
-
         reps = (best_reps // 2 * 2).to(dtype=torch.int8)
 
         reps_high = reps + 2
@@ -105,11 +102,10 @@ class Workout:
             reps = combined[best_workout]
 
         score = self.model(reps).sigmoid()
+        print(best_reps)
+        print(reps)
+        print(score)
 
-        print(f'\nWorkout = {reps[0].tolist()}')
-
-        score = ' '.join([f'{i:.05f}' for i in score[0]])
-        print(f'  Score = [{score}]\n')
         return reps
 
 
