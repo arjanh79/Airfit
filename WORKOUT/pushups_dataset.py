@@ -27,7 +27,7 @@ class PushUpsDataset(Dataset):
 
         # Remove this monster as soon as possible.
         assert(torch.min(max_success) < 8)
-        max_success[torch.where(max_success <= 8)] = 8
+        max_success[torch.where(max_success < 8)] = 8
 
         max_success = max_success.to(torch.int64).unsqueeze(0)
 
