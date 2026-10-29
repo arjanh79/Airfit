@@ -3,7 +3,7 @@ from datetime import datetime
 
 import torch
 import torch.optim as optim
-from yaml._yaml import ScalarEvent
+
 
 from WORKOUT.pushups_trainer import PushUpsModel
 
