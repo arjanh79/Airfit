@@ -46,7 +46,7 @@ class Workout:
             p_success = predict.sigmoid()
 
             penalty = (1 - p_success)
-            penalty_loss = ((penalty_weight * penalty) ** 2).mean()
+            penalty_loss = ((penalty_weight * penalty) ** 0.5).mean()
             var_loss = torch.var(reps / self.var_mask, unbiased=True)
 
             reps_loss = -reps.mean()
@@ -70,7 +70,7 @@ class Workout:
             optimizer.step()
 
             if not reps.grad is None:
-                if torch.max(torch.abs(reps.grad)) < 0.025:
+                if torch.max(torch.abs(reps.grad)) < 0.01:
                     break
 
         reps = (best_reps // 2 * 2).to(dtype=torch.int8)
@@ -102,9 +102,13 @@ class Workout:
             reps = combined[best_workout]
 
         score = self.model(reps).sigmoid()
-        print(best_reps)
-        print(reps)
-        print(score)
+
+        scores = list(zip(reps, score, best_reps))
+
+        print(' Reps\t\t Scores\t\t  Model')
+        for idx in range(len(scores[0][0])):
+            print(f'\t{scores[0][0][idx].item()}\t\t{scores[0][1][idx].item():.05f}\t\t{scores[0][2][idx].item():.05f}')
+
 
         return reps
 
