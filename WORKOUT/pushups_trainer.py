@@ -18,8 +18,8 @@ class PushUpsModel(nn.Module):
         self.workout_length = 11
 
         embedding_dim = 4
-        self.seq_emb = nn.Embedding(self.workout_length + 1, embedding_dim, padding_idx=0, max_norm=2)
-        self.eid_emb = nn.Embedding(5 + 1, embedding_dim, padding_idx=0, max_norm=2)
+        self.seq_emb = nn.Embedding(self.workout_length + 1, embedding_dim, padding_idx=0, max_norm=1)
+        self.eid_emb = nn.Embedding(5 + 1, embedding_dim, padding_idx=0, max_norm=1)
 
         self.rep_block = nn.Sequential(nn.Linear(1, embedding_dim),
                                   nn.LayerNorm(embedding_dim),
