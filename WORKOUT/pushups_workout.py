@@ -55,7 +55,7 @@ class Workout:
 
             probs_score = predict.sigmoid()
 
-            if torch.min(probs_score) < 0.9:
+            if torch.min(probs_score) < 0.8:
                 break
 
             min_prob = f'{torch.min(probs_score).item():.05f}'
@@ -67,11 +67,11 @@ class Workout:
 
             loss.backward(retain_graph=True)
 
-            optimizer.step()
-
             if not reps.grad is None:
                 if torch.max(torch.abs(reps.grad)) < 0.01:
                     break
+
+            optimizer.step()
 
         reps = (best_reps // 2 * 2).to(dtype=torch.int8)
 
