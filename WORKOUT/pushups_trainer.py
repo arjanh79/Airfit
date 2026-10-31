@@ -125,3 +125,5 @@ class PushUpsTrainer:
 if __name__ == '__main__':
     pushups_trainer = PushUpsTrainer()
     pushups_trainer.train_model()
+
+
