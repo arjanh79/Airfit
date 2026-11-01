@@ -21,7 +21,7 @@ class Workout:
 
     def optimize(self):
 
-        reps = self.var_mask.to(torch.float)
+        reps = self.var_mask.to(torch.float) * 2
 
 
         start_reps = reps.tolist()
