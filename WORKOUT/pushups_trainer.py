@@ -74,7 +74,7 @@ class PushUpsTrainer:
         self.train_dl = DataLoader(self.ds, shuffle=False, batch_size=32)
         self.test_dl = DataLoader(Subset(self.ds, range(test_samples)), shuffle=False, batch_size=12)
 
-        self.optimizer = optim.AdamW(self.model.parameters(), weight_decay=0.001, lr=0.001)
+        self.optimizer = optim.AdamW(self.model.parameters(), weight_decay=0.001, lr=0.0001)
         self.loss_fn = nn.BCEWithLogitsLoss(reduction='none')
 
 
@@ -110,7 +110,7 @@ class PushUpsTrainer:
         for epoch in range(num_epochs):
             loss = self.train_one_epoch()
             print(f'{epoch:03d} {loss.item():.5f}')
-            if (best_loss - loss) > 0.0001:
+            if (best_loss - loss) > 0.00005:
                 best_loss = loss
                 no_improvement = 0
                 torch.save(self.model.state_dict(), 'best_model.pth')

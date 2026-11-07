@@ -23,7 +23,9 @@ class PushUpsDataset(Dataset):
         return x, y
 
     def create_upper_limits(self):
-        max_success = torch.max(self.x * self.y, dim=0).values * 1.25
+        max_success = torch.ceil(
+            torch.max(self.x * self.y, dim=0).values * 1.25
+        )
         max_success.clamp_(min=8)
         max_success = max_success.to(torch.int64).unsqueeze(0)
         fail_tensor = torch.zeros_like(max_success).to(torch.float32)

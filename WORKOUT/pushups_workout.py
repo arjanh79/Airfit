@@ -23,7 +23,6 @@ class Workout:
 
         reps = self.var_mask.to(torch.float) * 2
 
-
         start_reps = reps.tolist()
         start_reps = ' '.join([f'{i:.02f}' for i in start_reps[0]])
         print(f'START REPS: [{start_reps}]\n')
@@ -46,7 +45,7 @@ class Workout:
             p_success = predict.sigmoid()
 
             penalty = (1 - p_success)
-            penalty_loss = ((penalty_weight * penalty) ** 0.5).mean()
+            penalty_loss = ((penalty_weight * penalty) ** 2).mean()
             var_loss = torch.var(reps / self.var_mask, unbiased=True)
 
             reps_loss = -reps.mean()
