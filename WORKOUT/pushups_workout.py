@@ -45,7 +45,7 @@ class Workout:
             p_success = predict.sigmoid()
 
             penalty = (1 - p_success)
-            penalty_loss = ((penalty_weight * penalty) ** 2).mean()
+            penalty_loss = penalty_weight * penalty.square().mean()
             var_loss = torch.var(reps / self.var_mask, unbiased=True)
 
             reps_loss = -reps.mean()
