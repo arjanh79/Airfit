@@ -99,13 +99,15 @@ class Workout:
             best_workout = predictions.min(dim=1).values.argmax()
             reps = combined[best_workout].unsqueeze(0)
 
+        reps[0][0] = 8
+
         score = self.model(reps).sigmoid()
 
         scores = list(zip(reps, score, best_reps))
 
-        print(' Reps\t\t Scores\t\t  Model')
+        print(' Reps\t\t Scores\t\t\t Model')
         for idx in range(len(scores[0][0])):
-            print(f'\t{scores[0][0][idx].item()}\t\t{scores[0][1][idx].item():.05f}\t\t{scores[0][2][idx].item():.05f}')
+            print(f'{scores[0][0][idx].item():>5}\t\t{scores[0][1][idx].item():.05f}\t\t{scores[0][2][idx].item():>10.05f}')
 
 
         return reps
