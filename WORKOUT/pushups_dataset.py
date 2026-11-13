@@ -26,7 +26,6 @@ class PushUpsDataset(Dataset):
         max_success = torch.ceil(
             torch.max(self.x * self.y, dim=0).values * 1.25
         )
-        max_success.clamp_(min=8)
         max_success = max_success.to(torch.int64).unsqueeze(0)
         fail_tensor = torch.zeros_like(max_success).to(torch.float32)
         loss = torch.tensor([[1.0]], dtype=torch.float32)

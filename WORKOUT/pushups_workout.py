@@ -83,7 +83,7 @@ class Workout:
         self.model.eval()
         with torch.no_grad():
             predictions = self.model(combined).sigmoid()
-            pred_mask = torch.sum(predictions > 0.8, dim=1) == 11
+            pred_mask = (predictions > 0.9).all(dim=1)
             combined = combined[pred_mask]
 
             total_reps = torch.sum(combined, dim=1)
@@ -99,7 +99,6 @@ class Workout:
             best_workout = predictions.min(dim=1).values.argmax()
             reps = combined[best_workout].unsqueeze(0)
 
-        reps[0][0] = 8
 
         score = self.model(reps).sigmoid()
 
