@@ -21,7 +21,7 @@ class Workout:
 
     def optimize(self):
 
-        reps = self.var_mask.to(torch.float) * 2
+        reps = self.var_mask.to(torch.float) * 4
 
         start_reps = reps.tolist()
         start_reps = ' '.join([f'{i:.02f}' for i in start_reps[0]])
@@ -100,7 +100,7 @@ class Workout:
             best_workout = predictions.min(dim=1).values.argmax()
             reps = combined[best_workout].unsqueeze(0)
 
-
+        reps[0][1] = 8
         score = self.model(reps).sigmoid()
 
         scores = list(zip(reps, score, best_reps))
