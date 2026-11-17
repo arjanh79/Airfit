@@ -69,10 +69,10 @@ class PushUpsTrainer:
             self.model.load_state_dict(torch.load('best_model.pth', weights_only=True))
 
         self.ds = PushUpsDataset()
-        test_samples = min(len(self.ds), 12)
+        test_samples = min(len(self.ds), 13) # 1 synthic + 12 real samples
 
         self.train_dl = DataLoader(self.ds, shuffle=False, batch_size=32)
-        self.test_dl = DataLoader(Subset(self.ds, range(test_samples)), shuffle=False, batch_size=12)
+        self.test_dl = DataLoader(Subset(self.ds, range(1, test_samples)), shuffle=False, batch_size=12) # only keep the real samples.
 
         self.optimizer = optim.AdamW(self.model.parameters(), weight_decay=0.001, lr=0.0001)
         self.loss_fn = nn.BCEWithLogitsLoss(reduction='none')
