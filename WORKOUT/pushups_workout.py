@@ -100,7 +100,7 @@ class Workout:
             best_workout = predictions.min(dim=1).values.argmax()
             reps = combined[best_workout].unsqueeze(0)
 
-        reps[0][1] = 8
+
         score = self.model(reps).sigmoid()
 
         scores = list(zip(reps, score, best_reps))
