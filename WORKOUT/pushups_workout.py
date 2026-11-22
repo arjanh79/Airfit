@@ -21,7 +21,7 @@ class Workout:
 
     def optimize(self):
 
-        reps = self.var_mask.to(torch.float) * 4
+        reps = self.var_mask.to(torch.float)
 
         start_reps = reps.tolist()
         start_reps = ' '.join([f'{i:.02f}' for i in start_reps[0]])
@@ -34,7 +34,7 @@ class Workout:
         self.model.eval()
         for param in self.model.parameters():
             param.requires_grad = False
-        optimizer = optim.AdamW([reps], lr=0.05, weight_decay=0.001, betas=(0.85, 0.999))
+        optimizer = optim.AdamW([reps], lr=0.05, weight_decay=0.001, betas=(0.9, 0.999))
 
         best_reps = reps.clone().detach()
 
@@ -54,7 +54,7 @@ class Workout:
 
             probs_score = predict.sigmoid()
 
-            if torch.min(probs_score) < 0.8:
+            if torch.min(probs_score) < 0.5:
                 break
 
             min_prob = f'{torch.min(probs_score).item():.05f}'
@@ -100,7 +100,7 @@ class Workout:
             best_workout = predictions.min(dim=1).values.argmax()
             reps = combined[best_workout].unsqueeze(0)
 
-        reps[0][1] = 8
+
         score = self.model(reps).sigmoid()
 
         scores = list(zip(reps, score, best_reps))
