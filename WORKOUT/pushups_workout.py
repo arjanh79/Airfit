@@ -64,7 +64,7 @@ class Workout:
 
             best_reps = reps.clone().detach()
 
-            loss.backward(retain_graph=True)
+            loss.backward()
 
             if not reps.grad is None:
                 if torch.max(torch.abs(reps.grad)) < 0.01:
