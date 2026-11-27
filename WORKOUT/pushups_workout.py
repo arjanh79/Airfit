@@ -16,8 +16,6 @@ class Workout:
         self.workout_length = 11
         self.var_mask = torch.tensor([[2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2]])
 
-        day_of_year = datetime.now().timetuple().tm_yday
-        self.gen = torch.Generator().manual_seed(day_of_year)
 
     def optimize(self):
 
