@@ -12,19 +12,19 @@ def create_workout():
 
     EXERCISES = [
         "Step Ups",
-        "Dumbbell Press",
+        "Push Ups",
         "Bent Over Rows",
         "Ab Crunches",
         "Clean and Press",
         "Step Ups",
-        "Dumbbell Press",
+        "Push Ups",
         "Bent Over Rows",
         "Ab Crunches",
         "Clean and Press",
         "Step Ups",
     ]
 
-    WEIGHTS = [12, 32, 24, 0, 20, 12, 32, 24, 0, 20, 12]
+    WEIGHTS = [12, 0, 24, 0, 20, 12, 0, 24, 0, 20, 12]
 
     return [
         {
