@@ -1,5 +1,4 @@
 import itertools
-from datetime import datetime
 
 import torch
 import torch.optim as optim
